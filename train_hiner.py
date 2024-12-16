@@ -159,7 +159,7 @@ def train(local_rank, args):
 
     args.metric_names = ['pred_seen_psnr', 'pred_seen_ssim', 'pred_unseen_psnr', 'pred_unseen_ssim',
         'quant_seen_psnr', 'quant_seen_ssim', 'quant_unseen_psnr', 'quant_unseen_ssim', 
-        'SAM', 'RMSE']
+        'CAM', 'RMSE']
     best_metric_list = [torch.tensor(0) for _ in range(len(args.metric_names))]
 
     # setup dataloader
@@ -303,7 +303,7 @@ def train(local_rank, args):
             lr = adjust_lr(optimizer, cur_epoch, args)
             img_out, _, _ = model(img_data, norm_idx)
             
-            final_loss = loss_fn(img_out*inpaint_mask, img_gt*inpaint_mask, args.loss)# + 0.01 * SAM.mean()    
+            final_loss = loss_fn(img_out*inpaint_mask, img_gt*inpaint_mask, args.loss)# + 0.01 * CAM.mean()    
             optimizer.zero_grad()
             final_loss.backward()
             optimizer.step()
