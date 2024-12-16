@@ -177,7 +177,7 @@ def psnr2(img1, img2):
     psnr = torch.clamp(psnr, min=0, max=50)
     return psnr
 
-def SAM(O,X):
+def CAM(O,X):
     O = O.squeeze(0).permute(1,2,0)
     X = X.squeeze(0).permute(1,2,0)
     for i in range(O.shape[2]):
@@ -197,13 +197,13 @@ def SAM(O,X):
     # print(s,t)
     return th
 
-def calculate_sam(x, y):
+def calculate_cam(x, y):
     cos_sim = torch.sum(x * y, dim=1) / (torch.norm(x, dim=1) * torch.norm(y, dim=1))
     print(cos_sim)
     angle = torch.acos(cos_sim)
     return angle.mean()
 
-def spectral_angle_mapper(x, y):
+def content_angle_mapper(x, y):
     # 将输入的张量展平成一维
     x = x.view(x.size(0), -1)
     y = y.view(y.size(0), -1)
@@ -236,28 +236,28 @@ def loss_fn(pred, target, loss_type='L2', batch_average=True):
         loss = F.binary_cross_entropy(pred, target, weight=weight, reduction='mean')
         # weight = None
         # loss = F.binary_cross_entropy(pred, target, reduction='mean')
-    elif loss_type == 'SAM':
-        # SAMs = SAM(target,pred)
-        # loss =  F.l1_loss(pred, target, reduction='none').flatten(1).mean(1) + SAMs
+    elif loss_type == 'CAM':
+        # CAMs = CAM(target,pred)
+        # loss =  F.l1_loss(pred, target, reduction='none').flatten(1).mean(1) + CAMs
 
         # pred = pred.squeeze(0).permute(1,2,0)
         # target = target.squeeze(0).permute(1,2,0)
-        # loss = calculate_sam(pred.view(pred.size(0), -1), target.view(target.size(0), -1))
+        # loss = calculate_cam(pred.view(pred.size(0), -1), target.view(target.size(0), -1))
 
         # -------------------------------------------- L1 Indian
-        sam_loss = spectral_angle_mapper(pred, target)
+        cam_loss = content_angle_mapper(pred, target)
         l1_loss = F.l1_loss(pred, target, reduction='none').flatten(1).mean(1)
-        sam_weight = 0.005
+        cam_weight = 0.005
         l1_weight = 0.5
-        loss = sam_weight * sam_loss + l1_weight * l1_loss
+        loss = cam_weight * cam_loss + l1_weight * l1_loss
 
         # # # -------------------------------------------- L2 PaviaU
-        # sam_loss = spectral_angle_mapper(pred, target)
+        # cam_loss = content_angle_mapper(pred, target)
         # l2_loss = F.mse_loss(pred, target, reduction='none').flatten(1).mean(1)
-        # sam_weight = 0.0005
+        # cam_weight = 0.0005
         # l2_weight = 2
-        # loss = sam_weight * sam_loss + l2_weight * l2_loss
-        # print(sam_loss)
+        # loss = cam_weight * cam_loss + l2_weight * l2_loss
+        # print(cam_loss)
     elif loss_type == 'Fusion1':
         loss = 0.3 * F.mse_loss(pred, target, reduction='none').flatten(1).mean(1) + 0.7 * (1 - ssim(pred, target, data_range=1, size_average=False))
     elif loss_type == 'Fusion2':
