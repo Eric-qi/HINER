@@ -32,7 +32,7 @@ pip install -r requirements.txt
 CUDA_VISIBLE_DEVICES=0 python train_hiner.py  --outf HINER \
     --data_path data/IndianPine.mat --vid IndianPine.mat --data_type HSI \
     --arch hiner --conv_type none pshuffel --act gelu --norm none  --crop_list 180_180  --ori_shape 146_146_200 \
-    --resize_list -1 --loss SAM  --enc_dim 64_16 \
+    --resize_list -1 --loss CAM  --enc_dim 64_16 \
     --quant_model_bit 8 --quant_embed_bit 8 --fc_hw 3_3 \
     --dec_strds 5 3 2 2 --ks 0_1_5 --reduce 1.2   \
     --modelsize 1.0  -e 300 --eval_freq 30  --lower_width 12 -b 1 --lr 0.001
@@ -43,7 +43,7 @@ CUDA_VISIBLE_DEVICES=0 python train_hiner.py  --outf HINER \
 CUDA_VISIBLE_DEVICES=1 python train_hiner.py  --outf HINER \
     --data_path data/PaviaU.mat --vid PaviaU.mat --data_type HSI  \
     --arch hiner --conv_type convnext pshuffel --act gelu --norm none  --crop_list 720_360  --ori_shape 610_340_103 \
-    --resize_list -1 --loss SAM  --enc_dim 64_16 \
+    --resize_list -1 --loss CAM  --enc_dim 64_16 \
     --quant_model_bit 8 --quant_embed_bit 8 --fc_hw 6_3\
     --dec_strds 5 4 3 2 --ks 0_1_5 --reduce 1.2   \
     --modelsize 1.0  -e 300 --eval_freq 30  --lower_width 12 -b 1 --lr 0.001
