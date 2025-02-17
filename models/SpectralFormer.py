@@ -169,7 +169,7 @@ class Transformer(nn.Module):
                 x = attn(x, mask = mask)
                 x = ff(x)
                 nl += 1
-        elif self.mode == 'HINER':
+        elif self.mode == 'Super':
             last_output = []
             nl = 0
             for attn, ff in self.layers:           
