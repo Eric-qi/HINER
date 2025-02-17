@@ -11,14 +11,13 @@ This is the official implementation of HINER (ACM MM'24), a novel neural represe
 * **Experiments:** Experimental results on various HSI datasets demonstrate the superior compression performance of our HINER compared to the existing learned methods and also the traditional codecs. Our model is lightweight and computationally efficient, which maintains high accuracy for downstream classification task even on decoded HSIs at high compression ratios.
 
 
-## TODO
-✅ HSI Compression (before 2025.1)
+## News
+✅ 2024.12: HSI Compression has been incorporated
 
-☑️ Classification on compressed HSI (before 2025.3)
+✅ 2025.02: Classification on compressed HSI has been incorporated
 
-☑️ More implementations for compared literatures (before 2025.3)
+✅ 2025.02: More implementations for compared literatures can be used.
 
-☑️ Optimize Quantization (before 2025.4)
 
 
 ## Requirement
@@ -49,11 +48,31 @@ CUDA_VISIBLE_DEVICES=1 python train_hiner.py  --outf HINER \
     --modelsize 1.0  -e 300 --eval_freq 30  --lower_width 12 -b 1 --lr 0.001
 ```
 
-## Quick Usage for Classification on compressed HSI
+* You can change **--modelsize** for different bitrate
+* More epoch means better performance while increasing encoding time
+* You can change hyperparameters for various architecture and optimization strategies.
+
+
+## Quick Usage for Classification on Compressed HSI
+1. **Train HINER-Classification in IndianPine with SpectralFormer**
 ```bash
-    Coming Soon!
+CUDA_VISIBLE_DEVICES=2 python train_hiner_cls.py  --outf HINER_CLS \
+    --data_path data/IndianPine.mat  --vid IndianPine.mat --data_type HSI  \
+    --arch hiner --conv_type convnext pshuffel --act gelu --norm none  --crop_list 180_180  \
+    --resize_list -1 --loss CAM  --enc_dim 64_16 --fc_hw 3_3  \
+    --quant_model_bit 8 --quant_embed_bit 8  \
+    --dec_strds 5 3 2 2 --ks 0_1_5 --reduce 1.2   \
+    --modelsize 0.5  -e 300 --eval_freq 30  --lower_width 12 -b 1 --lr 0.001   \
+    --patches=7 --band_patches=3 --mode='CAF' --weight_decay=5e-3  \
+    --weight your_path
 ```
 
+* You can change **--modelsize** for different bitrate
+* You can change hyperparameters for various architecture and optimization strategies.
+
+
+## Implementations for Compared Literatures
+You can change **--arch** and **--mode** to test other networks. For reproducing other methods, you should keep naive hyperparameters as their paper.
 
 ## Contact
 Junqi Shi: junqishi@smail.nju.edu.cn
